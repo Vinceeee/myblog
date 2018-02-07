@@ -1,0 +1,59 @@
+version: '3'
+services:
+
+   web:
+      build: ./MyBlog
+      container_name: web_app
+      # depends_on:
+      #   - db
+      #   - redis
+      volumes:
+        - $PWD/MyBlog/code:/code
+        - $PWD/MyBlog/code/uwsgi_log:/var/log/uwsgi
+      command: sh /code/startup.sh
+      networks: 
+        - front_end
+        - back_end
+
+   db:
+     image: mysql:latest
+     container_name: db_mysql
+     volumes:
+        - $PWD/mysql/conf.d:/etc/mysql/conf.d
+        - $PWD/mysql/data:/var/lib/mysql
+        - $PWD/mysql/bin:/root/bin
+     ports:
+        - "3306:3306"
+     environment:
+         MYSQL_USER: root  
+         MYSQL_ROOT_PASSWORD: 123456  
+     networks: 
+         - back_end
+     
+   redis:
+     container_name: cache_redis
+     image: redis:latest
+     ports:
+        - "6379:6379"
+     networks: 
+        - back_end
+
+   nginx:
+     image: nginx:alpine
+     container_name: agent_nginx
+     volumes:
+       - $PWD/nginx:/etc/nginx
+     ports:
+       - "80:80"
+     networks: 
+       - front_end
+  
+networks: 
+  front_end: 
+    driver: bridge
+    ipam:
+      driver : default
+      config:
+        - subnet: 172.168.238.0/24
+  back_end: 
+    driver : bridge

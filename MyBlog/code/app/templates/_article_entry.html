@@ -1,0 +1,8 @@
+{% if articles|count == 0 %}
+        <h1>Find Nothing!</h1>
+{% endif %}
+{% for article in articles %}
+    <div id='article-entry' class="entry-box">
+    {% include '_article_info.html' %}
+    </div>
+{% endfor %}
