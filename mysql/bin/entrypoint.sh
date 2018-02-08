@@ -2,9 +2,9 @@
 
 if [[ $? == 0 ]];then
 mysql -uroot -p123456<<EOF
-create database tangdb;
-create user tang;
-grant all PRIVILEGES on tangdb.* to tang identified by '123456';
+create database mydb;
+create user my;
+grant all PRIVILEGES on mydb.* to my identified by '123456';
 EOF
 fi
 

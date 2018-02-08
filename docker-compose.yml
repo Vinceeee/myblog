@@ -4,19 +4,22 @@ services:
    web:
       build: ./MyBlog
       container_name: web_app
-      # depends_on:
-      #   - db
-      #   - redis
+      depends_on:
+        - db
+        - redis
       volumes:
         - $PWD/MyBlog/code:/code
         - $PWD/MyBlog/code/uwsgi_log:/var/log/uwsgi
       command: sh /code/startup.sh
-      networks: 
+      environment:
+        - DATABASE_URL=mysql+pymysql://my:123456@db/mydb
+        - REDIS_HOST=redis
+      networks:
         - front_end
         - back_end
 
    db:
-     image: mysql:latest
+     image: mysql:5.7
      container_name: db_mysql
      volumes:
         - $PWD/mysql/conf.d:/etc/mysql/conf.d
@@ -32,7 +35,7 @@ services:
      
    redis:
      container_name: cache_redis
-     image: redis:latest
+     image: redis:alpine
      ports:
         - "6379:6379"
      networks: 
